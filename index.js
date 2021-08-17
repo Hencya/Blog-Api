@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 
 const app = express();
 
@@ -6,6 +7,8 @@ const productRoutes = require('./src/routes/products');
 
 const port = 3000;
 const host = 'localhost';
+
+app.use(bodyParser.json()); // middleware json
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
