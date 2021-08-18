@@ -3,7 +3,8 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
-const productRoutes = require('./src/routes/products');
+const authRoutes = require('./src/routes/auth');
+const blogRoutes = require('./src/routes/blog');
 
 const port = 3000;
 const host = 'localhost';
@@ -17,7 +18,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/api/v1/', productRoutes);
+app.use('/api/v1/', authRoutes);
+app.use('/api/v1/', blogRoutes);
 
 app.listen(port);
 console.log(`Server bejalan di http://${host}:${port}`);
