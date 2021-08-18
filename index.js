@@ -21,5 +21,13 @@ app.use((req, res, next) => {
 app.use('/api/v1/', authRoutes);
 app.use('/api/v1/', blogRoutes);
 
+app.use((error, req, res, next) => {
+  const status = error.errorStatus || 500;
+  const { message, data } = error;
+
+  res.status(status).json({ message, data });
+  next();
+});
+
 app.listen(port);
 console.log(`Server bejalan di http://${host}:${port}`);
