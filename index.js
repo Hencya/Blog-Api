@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const app = express();
 
@@ -29,5 +30,13 @@ app.use((error, req, res, next) => {
   next();
 });
 
-app.listen(port);
-console.log(`Server bejalan di http://${host}:${port}`);
+mongoose.connect('mongodb+srv://admin:root@cluster0.ql8d0.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
+}).then(() => {
+  app.listen(port, () => {
+    console.log(`Server bejalan di http://${host}:${port}`);
+  });
+}).catch((err) => console.log(err));
