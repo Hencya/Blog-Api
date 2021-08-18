@@ -13,6 +13,8 @@ const blogPostSchema = new mongoose.Schema({
     type: Object,
     required: true,
   },
+}, {
+  timestamps: true,
 });
 
 module.exports = mongoose.model('BlogPost', blogPostSchema);

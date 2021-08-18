@@ -22,15 +22,14 @@ app.use((req, res, next) => {
 app.use('/api/v1/', authRoutes);
 app.use('/api/v1/', blogRoutes);
 
-app.use((error, req, res, next) => {
+app.use((error, req, res) => {
   const status = error.errorStatus || 500;
   const { message, data } = error;
 
   res.status(status).json({ message, data });
-  next();
 });
 
-mongoose.connect('mongodb+srv://admin:root@cluster0.ql8d0.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
+mongoose.connect('mongodb+srv://admin:root@cluster0.ql8d0.mongodb.net/Blog-Database?retryWrites=true&w=majority', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,

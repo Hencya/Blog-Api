@@ -1,5 +1,5 @@
 module.exports = {
-  register: (req, res, next) => {
+  register: (req, res) => {
     const { name, email } = req.body;
 
     const result = {
@@ -11,6 +11,5 @@ module.exports = {
       },
     };
     res.status(201).json(result);
-    next();
   },
 };
