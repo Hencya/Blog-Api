@@ -3,8 +3,6 @@ const BlogPost = require('../models/blog');
 
 module.exports = {
   createBlog: (req, res) => {
-    const { title, body } = req.body;
-
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -14,9 +12,19 @@ module.exports = {
       throw err;
     }
 
+    if (!req.file) {
+      const err = new Error('Missing image');
+      err.errorStatus = 422;
+      throw err;
+    }
+
+    const { title, body } = req.body;
+    const image = req.file.path;
+
     const Posting = new BlogPost({
       title,
       body,
+      image,
       author: {
         uid: 1,
         name: 'Faiz Rofi Hencya',
