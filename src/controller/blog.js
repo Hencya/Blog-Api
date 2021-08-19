@@ -2,7 +2,7 @@ const { validationResult } = require('express-validator');
 const BlogPost = require('../models/blog');
 
 module.exports = {
-  createBlog: (req, res) => {
+  createBlog: (req, res, next) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -38,7 +38,20 @@ module.exports = {
         });
       })
       .catch((err) => {
-        console.log('err: ', err);
+        next(err);
+      });
+  },
+
+  getAllBlogPosts: (req, res, next) => {
+    BlogPost.find()
+      .then((result) => {
+        res.status(200).json({
+          message: 'Succes',
+          data: result,
+        });
+      })
+      .catch((err) => {
+        next(err);
       });
   },
 };
