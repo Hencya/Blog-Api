@@ -6,7 +6,8 @@ const blogController = require('../controller/blog');
 
 const errorHandlerBlog = require('../validator/blog');
 
-router.post('/post', errorHandlerBlog.createBlogError, blogController.createBlog);
+router.post('/post', errorHandlerBlog.BlogError, blogController.createBlog);
 router.get('/posts', blogController.getAllBlogPosts);
 router.get('/post/:postId', blogController.getBlogPostById);
+router.put('/post/:postId', errorHandlerBlog.BlogError, blogController.updateBlogPostById);
 module.exports = router;

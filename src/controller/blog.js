@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const { validationResult } = require('express-validator');
 const BlogPost = require('../models/blog');
 
@@ -67,6 +68,51 @@ module.exports = {
 
         res.status(200).json({
           message: 'Succes',
+          data: result,
+        });
+      })
+      .catch((err) => {
+        next(err);
+      });
+  },
+
+  updateBlogPostById: (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const err = new Error('Invalid Value');
+      err.errorStatus = 400;
+      err.data = errors.array();
+      throw err;
+    }
+
+    if (!req.file) {
+      const err = new Error('Missing image');
+      err.errorStatus = 422;
+      throw err;
+    }
+
+    const { title, body } = req.body;
+    const image = `images/${req.file.filename}`;
+    const { postId } = req.params;
+
+    BlogPost.findById(postId)
+      .then((post) => {
+        if (!post) {
+          const error = new Error('Postingan tidak ada');
+          error.errorStatus = 404;
+          throw error;
+        }
+
+        post.title = title;
+        post.body = body;
+        post.imageUrl = image;
+
+        return post.save();
+      })
+      .then((result) => {
+        res.status(200).json({
+          message: 'Update Blog Post Success',
           data: result,
         });
       })
