@@ -54,4 +54,24 @@ module.exports = {
         next(err);
       });
   },
+
+  getBlogPostById: (req, res, next) => {
+    const { postId } = req.params;
+    BlogPost.findById(postId)
+      .then((result) => {
+        if (!result) {
+          const error = new Error('Postingan tidak ada ');
+          error.errorStatus = 404;
+          throw error;
+        }
+
+        res.status(200).json({
+          message: 'Succes',
+          data: result,
+        });
+      })
+      .catch((err) => {
+        next(err);
+      });
+  },
 };
