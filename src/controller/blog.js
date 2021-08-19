@@ -19,12 +19,11 @@ module.exports = {
     }
 
     const { title, body } = req.body;
-    const image = req.file.path;
 
     const Posting = new BlogPost({
       title,
       body,
-      image,
+      imageUrl: `images/${req.file.filename}`,
       author: {
         uid: 1,
         name: 'Faiz Rofi Hencya',
