@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 const { validationResult } = require('express-validator');
 const BlogPost = require('../models/blog');
+const removeImage = require('../utils/removeImage');
 
 module.exports = {
   createBlog: (req, res, next) => {
@@ -104,6 +105,7 @@ module.exports = {
           throw error;
         }
 
+        removeImage(post.imageUrl);
         post.title = title;
         post.body = body;
         post.imageUrl = image;
@@ -113,6 +115,31 @@ module.exports = {
       .then((result) => {
         res.status(200).json({
           message: 'Update Blog Post Success',
+          data: result,
+        });
+      })
+      .catch((err) => {
+        next(err);
+      });
+  },
+
+  deleteBlogPostById: (req, res, next) => {
+    const { postId } = req.params;
+
+    BlogPost.findById(postId)
+      .then((post) => {
+        if (!post) {
+          const error = new Error('Postingan tidak ada');
+          error.errorStatus = 404;
+          throw error;
+        }
+
+        removeImage(post.imageUrl);
+        return BlogPost.findByIdAndRemove(postId);
+      })
+      .then((result) => {
+        res.status(200).json({
+          message: 'Succes',
           data: result,
         });
       })
