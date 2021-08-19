@@ -1,42 +1,23 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const multer = require('multer');
 const path = require('path');
+const dotenv = require('dotenv');
+const multer = require('multer');
+const multerUtils = require('./src/utils/multer');
+const errorHandler = require('./src/utils/errorHandler');
+// Config
+dotenv.config();
 
 const app = express();
 
 const authRoutes = require('./src/routes/auth');
 const blogRoutes = require('./src/routes/blog');
 
-const port = 3000;
-const host = 'localhost';
-
-const fileStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'images');
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${new Date().getTime()}-${file.originalname}`);
-  },
-});
-
-const imageFilter = (req, file, cb) => {
-  if (
-    file.mimetype === 'image/png'
-    || file.mimetype === 'image/jpg'
-    || file.mimetype === 'image/jpeg'
-  ) {
-    cb(null, true);
-  } else {
-    cb(null, false);
-  }
-};
-
 // middleware
 app.use(bodyParser.json());
 app.use('/images', express.static(path.join(__dirname, 'images')));
-app.use(multer({ storage: fileStorage, fileFilter: imageFilter }).single('image'));
+app.use(multer({ storage: multerUtils.fileStorage, fileFilter: multerUtils.imageFilter }).single('image'));
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -48,20 +29,16 @@ app.use((req, res, next) => {
 app.use('/api/v1/', authRoutes);
 app.use('/api/v1/', blogRoutes);
 
-app.use((error, req, res) => {
-  const status = error.errorStatus || 500;
-  const { message, data } = error;
+app.use(errorHandler);
 
-  res.status(status).json({ message, data });
-});
-
-mongoose.connect('mongodb+srv://admin:root@cluster0.ql8d0.mongodb.net/Blog-Database?retryWrites=true&w=majority', {
+// connecting to DB
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,
   useFindAndModify: false,
 }).then(() => {
-  app.listen(port, () => {
-    console.log(`Server bejalan di http://${host}:${port}`);
+  app.listen(process.env.PORT_DEV || process.env.PORT_PROD, () => {
+    console.log(`Server bejalan di http://${process.env.HOST_DEV}:${process.env.PORT_DEV}`);
   });
 }).catch((err) => console.log(err));
